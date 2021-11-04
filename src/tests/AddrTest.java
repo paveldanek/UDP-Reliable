@@ -8,7 +8,7 @@ import client.ui.InitSettings;
 /**
  * TEST of command line args read.
  * 
- * Run from bin folder as follows: java main/AddrTest [arguments]
+ * Run from bin folder as follows: java tests/AddrTest [arguments]
  * 
  * @author starnet © 2021
  *
