@@ -43,7 +43,7 @@ public class Context implements Notifiable {
 	// stores the newest datagram to be sent out
 	private DataPacket currentPacketOut;
 	// stores TRUE if the currentPacketOut has not been sent out yet
-	private boolean outPacketNew;
+	private boolean outPacketNew = false;
 	// A period for which the DatagramSocket will block while listening for incoming
 	// traffic on port. After BLOCKING_PERIOD milliseconds, it will continue
 	// executing code.

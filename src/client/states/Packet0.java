@@ -16,7 +16,7 @@ import multiTimer.Timer;
  */
 public class Packet0 extends ClientState implements Notifiable {
 	private static Packet0 instance;
-	private Timer timer;
+	private Timer timer = null;
 
 	/**
 	 * Private constructor for the singleton pattern
@@ -52,14 +52,14 @@ public class Packet0 extends ClientState implements Notifiable {
 	 * Processes new data read event by sending it out and then reporting on it.
 	 */
 	public void handleEvent(NewDataRead event) {
-		// sending the datagram
-		int errorOption = Context.instance().sendPacket();
 		int status;
 		if (Context.instance().isOutPacketNew()) {
 			status = Context.instance().PK_SEND;
 		} else {
 			status = Context.instance().PK_RESEND;
 		}
+		// sending the datagram
+		int errorOption = Context.instance().sendPacket();
 		// starts the timer to measure timely response of the server (receiver)
 		timer = new Timer(this, 0, Context.instance().getTimeoutValue());
 		Context.instance().displaySend(status, Context.instance().getCurrentPacketOut().getSeqno(),
