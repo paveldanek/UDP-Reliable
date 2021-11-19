@@ -51,6 +51,7 @@ public class WaitForPk1 extends ServerState {
 			Context.instance().displayReceive(Context.instance().PK_RCVD,
 					Context.instance().getCurrentPacketIn().getSeqno(), Context.instance().getReceiveTime(),
 					Context.instance().CON_CORR);
+			Context.instance().handleEvent(NewAckToSend.instance()); // send an ACK for previous
 		} else if (!Context.instance().isInPacketNew()) { // if it's a duplicate
 			Context.instance().displayReceive(Context.instance().PK_DUPL,
 					Context.instance().getCurrentPacketIn().getSeqno(), Context.instance().getReceiveTime(),
@@ -67,6 +68,7 @@ public class WaitForPk1 extends ServerState {
 					Context.instance().getCurrentPacketIn().getSeqno(), Context.instance().getReceiveTime(),
 					Context.instance().CON_RCVD);
 			Context.instance().writeData(); // write it into output binary file
+			Context.instance().setLastGoodSeqNo();
 			Context.instance().handleEvent(NewAckToSend.instance()); // send an ACK
 		}
 	}
@@ -75,14 +77,11 @@ public class WaitForPk1 extends ServerState {
 	 * Sends out a new acknowledgement and reports on it.
 	 */
 	public void handleEvent(NewAckToSend event) {
-		if (Context.instance().isInPacketNew()) {
-			int errorOption = Context.instance().sendAck(); // acknowledge Packet1
-			Context.instance().displayAck(Context.instance().AK_SEND, 1, errorOption);
+		int errorOption = Context.instance().sendAck();
+		if (Context.instance().getCurrentPacketIn().getCksum() != 0 || !Context.instance().isInPacketNew()) {
+			Context.instance().displayAck(Context.instance().AK_RESEND, errorOption);
 		} else {
-			Context.instance().toggleExpectedSeqNo();
-			int errorOption = Context.instance().sendAck(); // acknowledge Packet0
-			Context.instance().toggleExpectedSeqNo();
-			Context.instance().displayAck(Context.instance().AK_RESEND, 0, errorOption);
+			Context.instance().displayAck(Context.instance().AK_SEND, errorOption);
 		}
 	}
 }

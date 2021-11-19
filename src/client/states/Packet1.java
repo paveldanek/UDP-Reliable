@@ -79,11 +79,15 @@ public class Packet1 extends ClientState implements Notifiable {
 		if (Context.instance().getCurrentPacketIn().getCksum() != 0) {
 			Context.instance().displayAck(Context.instance().AK_ERR,
 					Context.instance().getCurrentPacketIn().getAckno());
+			timer.stop();
+			Context.instance().handleEvent(NewDataRead.instance());
 			return;
 		}
 		if (Context.instance().getCurrentPacketIn().getAckno() == 0) {
 			Context.instance().displayAck(Context.instance().AK_DUPL,
 					Context.instance().getCurrentPacketIn().getAckno());
+			timer.stop();
+			Context.instance().handleEvent(NewDataRead.instance());
 			return;
 		}
 		// if the recieved ACK packet was not out-of-sequence and uncorrupted, gives

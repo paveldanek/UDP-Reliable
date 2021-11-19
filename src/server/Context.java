@@ -48,6 +48,7 @@ public class Context {
 	private DatagramSocket datagramSocket;
 	private FileOutputStream outputStream;
 	private int expectedSeqNo = 0;
+	private int lastGoodSeqNo = 1;
 	private boolean dataWritten = false;
 	private double receiveTimeMillis = 0.0;
 
@@ -176,6 +177,14 @@ public class Context {
 		return expectedSeqNo;
 	}
 
+	public int getLastGoodSeqNo() {
+		return lastGoodSeqNo;
+	}
+
+	public void setLastGoodSeqNo() {
+		lastGoodSeqNo = expectedSeqNo;
+	}
+
 	public double getReceiveTime() {
 		return receiveTimeMillis;
 	}
@@ -241,7 +250,7 @@ public class Context {
 	 */
 	public int sendAck() {
 		int outcome;
-		setCurrentPacketOut(new Packet(getExpectedSeqNo()));
+		setCurrentPacketOut(new Packet(getLastGoodSeqNo()));
 		Packet realPacketOut = corrupter(getCurrentPacketOut());
 		if (realPacketOut != null) {
 			byte[] data = new byte[8];
@@ -323,8 +332,8 @@ public class Context {
 	/**
 	 * Displays ACKnoledgement sent out information.
 	 */
-	public void displayAck(int sentCode, int ackNo, int errorStatus) {
-		ui.printAck(sentCode, ackNo, errorStatus);
+	public void displayAck(int sentCode, int errorStatus) {
+		ui.printAck(sentCode, lastGoodSeqNo, errorStatus);
 	}
 
 	/**
